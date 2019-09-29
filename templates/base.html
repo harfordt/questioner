@@ -1,0 +1,25 @@
+<!doctype html>
+<html class="no-js" lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% block head %}
+    <title>Questioner · {% block title %}{% endblock %}</title>
+    {% endblock %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/bootstrap-4.3.1-dist/css/bootstrap.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/questioner.css') }}">
+</head>
+<body>
+<div class="container">
+    <h1 class="display-1">questioner.</h1>
+    {% block body %}
+
+    {% endblock %}
+</div>
+
+<script src="{{ url_for('static', filename='vendor/jquery-3.4.1.min.js') }}"></script>
+<script src="{{ url_for('static', filename='vendor/bootstrap-4.3.1-dist/js/bootstrap.bundle.min.js') }}"></script>
+
+</body>
+</html>
