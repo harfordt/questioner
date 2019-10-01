@@ -6,3 +6,6 @@ venv
 
 # app database
 questioner.db
+
+# error logging
+logs/
