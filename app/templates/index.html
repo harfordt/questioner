@@ -3,12 +3,13 @@
 
 {% block app_content %}
 <h2>Hi, {{ current_user.username }}</h2>
+{% if form %}
 <div class="row justify-content-center">
     <div class="col-md-6">
         {{ wtf.quick_form(form) }}
     </div>
 </div>
-
+{% endif %}
 <div class="row justify-content-center">
     {% for post in posts %}
     {% include "_post.html" %}
