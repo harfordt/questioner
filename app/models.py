@@ -2,11 +2,15 @@ from datetime import datetime
 from app import db, bcrypt, login
 from flask_login import UserMixin
 
+from hashlib import md5  # for gravatar(s)
+
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.String(120), index=True, unique=True)
+    about_me = db.Column(db.String(140))
+    last_seen = db.Column(db.DateTime,default = datetime.utcnow())
     password_hash = db.Column(db.String(60))
     posts = db.relationship('Post', backref='author', lazy='dynamic')
 
@@ -18,6 +22,10 @@ class User(UserMixin, db.Model):
 
     def check_password(self, password):
         return bcrypt.check_password_hash(self.password_hash, password)
+
+    def avatar(self, size):
+        digest = md5(self.email.lower().encode('utf-8')).hexdigest()
+        return "https://www.gravatar.com/avatar/{}?d=identicon&s={}".format(digest, size)
 
 
 class Post(db.Model):

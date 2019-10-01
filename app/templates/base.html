@@ -36,6 +36,7 @@ questioner
                 <a class="nav-item nav-link" href="{{ url_for('register') }}">Register</a>
                 <a class="nav-item nav-link" href="{{ url_for('login') }}">Log in</a>
                 {% else %}
+                <a class="nav-item nav-link" href="{{ url_for('profile', username=current_user.username) }}">Profile</a>
                 <a class="nav-item nav-link" href="{{ url_for('logout') }}">Log out</a>
                 {% endif %}
             </div>

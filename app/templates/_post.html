@@ -1,0 +1,9 @@
+<div class="col-md-4">
+        <div class="card">
+            <img src="{{ post.author.avatar(256) }}" class="card-img-top" alt="{{ post.author.username }}'s profile picture">
+            <div class="card-body">
+                <h5 class="card-title"><strong>{{ post.author.username }}</strong> says:</h5>
+                <p class="card-text">{{ post.body }}</p>
+            </div>
+        </div>
+    </div>
