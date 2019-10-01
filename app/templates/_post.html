@@ -7,8 +7,8 @@
             </div>
             <div class="col-md-10">
                 <div class="card-body">
-                    <h5 class="card-title"><strong>{{ post.author.username }}</strong> says:</h5>
                     <p class="card-text">{{ post.body }}</p>
+                    <p class="card-text"><a href="{{ url_for('profile',username=post.author.username) }}" class="card-link">{{ post.author.username }}</a> at <small class="text-muted">{{ post.timestamp }}</small></p>
                 </div>
             </div>
         </div>
