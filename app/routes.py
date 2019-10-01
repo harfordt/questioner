@@ -10,14 +10,14 @@ from flask_login import current_user, login_user, logout_user, login_required
 from datetime import datetime
 
 
-@app.route('/', methods=['POST','GET'])
-@app.route('/home', methods=['POST','GET'])
-@app.route('/index', methods=['POST','GET'])
+@app.route('/', methods=['POST', 'GET'])
+@app.route('/home', methods=['POST', 'GET'])
+@app.route('/index', methods=['POST', 'GET'])
 @login_required
 def index():
     form = PostForm()
     if form.validate_on_submit():
-        post = Post(body=form.post.data,author=current_user)
+        post = Post(body=form.post.data, author=current_user)
         db.session.add(post)
         db.session.commit()
         flash('Success!')
@@ -28,6 +28,11 @@ def index():
     return render_template('index.html', title="welcome", posts=posts, form=form)
 
 
+@app.route('/explore')
+@login_required
+def explore():
+    posts = Post.query.order_by(Post.timestamp.desc()).all()
+    return render_template("index.html", posts=posts, title="Explore")
 
 
 @app.route('/login', methods=['GET', 'POST'])
