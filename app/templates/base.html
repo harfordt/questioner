@@ -30,6 +30,7 @@ questioner
         <div class="collapse navbar-collapse" id="question-nav-items">
             <div class="navbar-nav mr-auto">
                 <a class="nav-item nav-link" href="{{ url_for('index') }}">Home</a>
+                <a class="nav-item nav-link" href="{{ url_for('explore') }}">Explore</a>
             </div>
             <div class="navbar-nav">
                 {% if current_user.is_anonymous %}
