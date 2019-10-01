@@ -1,5 +1,5 @@
 #PyCharm config files
-.idea/
+.idea/workspace.xml
 
 # virtual environment directory
 venv
