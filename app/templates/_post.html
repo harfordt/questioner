@@ -1,9 +1,16 @@
-<div class="col-md-4">
-        <div class="card">
-            <img src="{{ post.author.avatar(256) }}" class="card-img-top" alt="{{ post.author.username }}'s profile picture">
-            <div class="card-body">
-                <h5 class="card-title"><strong>{{ post.author.username }}</strong> says:</h5>
-                <p class="card-text">{{ post.body }}</p>
+<div class="col-md-7">
+    <div class="card mb-1">
+        <div class="row no-gutters">
+            <div class="col-md-2">
+                <img src="{{ post.author.avatar(256) }}" class="w-100"
+                     alt="{{ post.author.username }}'s profile picture">
+            </div>
+            <div class="col-md-10">
+                <div class="card-body">
+                    <h5 class="card-title"><strong>{{ post.author.username }}</strong> says:</h5>
+                    <p class="card-text">{{ post.body }}</p>
+                </div>
             </div>
         </div>
     </div>
+</div>
