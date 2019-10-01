@@ -1,3 +1,8 @@
 #PyCharm config files
-.idea
+.idea/
+
+# virtual environment directory
 venv
+
+# app database
+questioner.db
