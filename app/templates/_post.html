@@ -7,8 +7,21 @@
             </div>
             <div class="col-md-10">
                 <div class="card-body">
-                    <p class="card-text">{{ post.body }}</p>
-                    <p class="card-text"><a href="{{ url_for('profile',username=post.author.username) }}" class="card-link">{{ post.author.username }}</a> at <small class="text-muted">{{ post.timestamp }}</small></p>
+                    <p class="card-text" id="post{{ post.id }}">{{ post.body }}</p>
+                    <p class="card-text"><a href="{{ url_for('profile',username=post.author.username) }}"
+                                            class="card-link">{{ post.author.username }}</a> at
+                        <small class="text-muted">{{ post.timestamp }}</small>
+                    </p>
+                    {% if post.language and post.language != g.locale %}
+                    <p class="mb-0" id="translation{{ post.id }}">
+                        <small class="text-muted mb-0">
+                            <a class="translate-button"
+                               data-source-lang="{{ post.language }}"
+                               data-dest-lang="{{ g.locale }}"
+                               href="#">{{ _('Translate') }}</a>
+                        </small>
+                    </p>
+                    {% endif %}
                 </div>
             </div>
         </div>
