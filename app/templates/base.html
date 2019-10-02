@@ -47,7 +47,7 @@ questioner
 {% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="container mb-5">
     {% with messages = get_flashed_messages() %}
     {% if messages %}
     {% for message in messages %}
@@ -60,4 +60,35 @@ questioner
 
     {% endblock %}
 </div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+    function translate(sourceElem, destElem, sourceLang, destLang) {
+        $(destElem).html('<img src="{{ url_for('static', filename='loading.gif') }}">');
+        $.post('/translate', {
+            text: $(sourceElem).text(),
+            source_language: sourceLang,
+            dest_language: destLang
+        }).done(function (response) {
+            $(destElem).text(response['text'])
+        }).fail(function () {
+            $(destElem).text("{{ _('Error: Could not contact server.') }}");
+        });
+    }
+
+    $('.translate-button').on('click', function () {
+        var id = $(this).parent().parent().attr('id');
+        id = id.substring("translation".length, id.length);
+
+        var postid = "#post" + id;
+        var translationid = "#translation" + id;
+        var sourcelang = $(this).attr('data-source-lang');
+        var destlang = $(this).attr('data-dest-lang');
+
+        translate(postid, translationid, sourcelang, destlang);
+    });
+
+</script>
 {% endblock %}
