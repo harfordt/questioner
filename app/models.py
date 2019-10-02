@@ -18,6 +18,7 @@ class User(UserMixin, db.Model):
     last_seen = db.Column(db.DateTime, default=datetime.utcnow())
     password_hash = db.Column(db.String(60))
     posts = db.relationship('Post', backref='author', lazy='dynamic')
+    boards = db.relationship('Board',backref='boardowner',lazy='dynamic')
     followed = db.relationship(
         'User', secondary=followers,
         primaryjoin=(followers.c.follower_id == id),
@@ -57,6 +58,7 @@ class User(UserMixin, db.Model):
         own = Post.query.filter_by(user_id=self.id)
         return followed.union(own).order_by(Post.timestamp.desc())
 
+
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.String(140))
@@ -66,6 +68,12 @@ class Post(db.Model):
 
     def __repr__(self):
         return '<Post {}>'.format(self.body)
+
+
+class Board(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    boardname = db.Column(db.String(40))
+    teacherid = db.Column(db.Integer, db.ForeignKey('user.id'))
 
 
 @login.user_loader

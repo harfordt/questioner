@@ -3,7 +3,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField
 from wtforms.validators import DataRequired, ValidationError, Email, EqualTo, Length
 
-from app.models import User
+from app.models import User, Board
 
 
 class LoginForm(FlaskForm):
@@ -47,6 +47,17 @@ class EditProfileForm(FlaskForm):
             if user is not None:
                 raise ValidationError("Please use a different username.")
 
+
 class PostForm(FlaskForm):
-    post = TextAreaField('Say something...',validators=[DataRequired(),Length(min=0,max=140)])
+    post = TextAreaField('Say something...', validators=[DataRequired(), Length(min=0, max=140)])
     submit = SubmitField('Submit')
+
+
+class CreateBoardForm(FlaskForm):
+    boardname = TextAreaField('Board name', validators=[DataRequired(), Length(min=1, max=40)])
+    submit = SubmitField('Create')
+
+    def validate_boardname(self, boardname):
+        user = Board.query.filter_by(boardname=boardname.data).first()
+        if user is not None:
+            raise ValidationError('Please use a different username.')

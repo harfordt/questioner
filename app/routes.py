@@ -2,8 +2,8 @@ from flask import render_template, request, flash, redirect, url_for
 from werkzeug.urls import url_parse
 
 from app import app, db  # db maybe shouldn't be here
-from app.models import User, Post  # this maybe shouldn't be here
-from app.forms import LoginForm, RegistrationForm, EditProfileForm, PostForm
+from app.models import User, Post, Board  # this maybe shouldn't be here
+from app.forms import LoginForm, RegistrationForm, EditProfileForm, PostForm, CreateBoardForm
 
 from flask_login import current_user, login_user, logout_user, login_required
 
@@ -155,20 +155,44 @@ def unfollow(username):
     flash('You are not following {}.'.format(username))
     return redirect(url_for('profile', username=username))
 
-@app.route('/translate',methods=["GET","POST"])
+
+@app.route('/translate', methods=["GET", "POST"])
 def translate_text():
     print("\n\n{}\n\n".format(request.form))
     print("""
     text: {}
     src:  {}
     dest: {}""".format(request.form['text'],
-                          request.form['source_language'],
-                          request.form['dest_language']))
+                       request.form['source_language'],
+                       request.form['dest_language']))
     return jsonify({
         'text': translate(request.form['text'],
                           request.form['source_language'],
                           request.form['dest_language'])
     })
+
+
+@app.route('/create-board', methods=['POST', 'GET'])
+@login_required
+def create_board():
+    form = CreateBoardForm()
+    if form.validate_on_submit():
+        board = Board(boardname=form.boardname.data, boardowner=current_user)
+        db.session.add(board)
+        db.session.commit()
+        return redirect(url_for('create_board'))
+    return render_template("create-board.html", title="create board", form=form)
+
+
+@app.route('/boards')
+def boards():
+    boards = Board.query.filter_by(teacherid=current_user.id).all()
+    print(boards)
+    return render_template('boards.html',title="Boards",boards=boards)
+
+@app.route('/board/<boardid>')
+def board(boardid):
+    return render_template('board.html',title='BOARD TITLE')
 
 
 @app.before_request
