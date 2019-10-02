@@ -9,3 +9,6 @@ questioner.db
 
 # error logging
 logs/
+
+# environment variables used by dotenv
+.env
