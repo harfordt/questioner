@@ -31,6 +31,7 @@ questioner
             <div class="navbar-nav mr-auto">
                 <a class="nav-item nav-link" href="{{ url_for('index') }}">Home</a>
                 <a class="nav-item nav-link" href="{{ url_for('explore') }}">Explore</a>
+                <a class="nav-item nav-link" href="{{ url_for('create-board') }}">Create board</a>
             </div>
             <div class="navbar-nav">
                 {% if current_user.is_anonymous %}
