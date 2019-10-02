@@ -1,11 +1,11 @@
-from flask import Flask
+from flask import Flask,request
 from config import Config
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_bootstrap import Bootstrap
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
-
+from flask_babel import Babel
 import logging
 from logging.handlers import RotatingFileHandler
 import os
@@ -18,9 +18,10 @@ migrate = Migrate(app, db)
 bcrypt = Bcrypt(app)
 login = LoginManager(app)
 login.login_view = 'login'
+babel = Babel(app)
 
 if not app.debug:
-    if not os.path.exists('logs'):
+    if not   os.path.exists('logs'):
         os.mkdir('logs')
     file_handler = RotatingFileHandler('logs/microblog.log', maxBytes=10240,
                                        backupCount=10)
@@ -31,5 +32,9 @@ if not app.debug:
 
     app.logger.setLevel(logging.INFO)
     app.logger.info('Microblog startup')
+
+@babel.localeselector
+def get_locale():
+    return request.accept_languages.best_match(app.config['LANGUAGES'])
 
 from app import routes, models, errors
