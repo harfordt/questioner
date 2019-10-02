@@ -9,6 +9,11 @@ from flask_login import current_user, login_user, logout_user, login_required
 
 from datetime import datetime
 
+from flask_babel import _, get_locale
+from flask import g, jsonify
+from guess_language import guess_language
+from app.translate import translate
+
 
 @app.route('/', methods=['POST', 'GET'])
 @app.route('/home', methods=['POST', 'GET'])
@@ -17,22 +22,32 @@ from datetime import datetime
 def index():
     form = PostForm()
     if form.validate_on_submit():
-        post = Post(body=form.post.data, author=current_user)
+        language = guess_language(form.post.data)
+        if language == "UNKNOWN" or len(language) > 5:
+            language = ""
+        post = Post(body=form.post.data, author=current_user, language=language)
         db.session.add(post)
         db.session.commit()
         flash('Success!')
         return redirect(url_for('index'))
-    # posts = Post.query.all()
-    posts = current_user.followed_posts().all()
-    print(posts)
-    return render_template('index.html', title="welcome", posts=posts, form=form)
+
+    page = request.args.get('page', 1, type=int)
+    posts = current_user.followed_posts().paginate(page, app.config['POSTS_PER_PAGE'], False)
+    prev_url = url_for('index', page=posts.prev_num) if posts.has_prev else None
+    next_url = url_for('index', page=posts.next_num) if posts.has_next else None
+
+    return render_template('index.html', title="welcome", form=form, posts=posts.items, prev_url=prev_url,
+                           next_url=next_url)
 
 
 @app.route('/explore')
 @login_required
 def explore():
-    posts = Post.query.order_by(Post.timestamp.desc()).all()
-    return render_template("index.html", posts=posts, title="Explore")
+    page = request.args.get('page', 1, type=int)
+    posts = Post.query.order_by(Post.timestamp.desc()).paginate(page, app.config['POSTS_PER_PAGE'], False)
+    prev_url = url_for('explore', page=posts.prev_num) if posts.has_prev else None
+    next_url = url_for('explore', page=posts.next_num) if posts.has_next else None
+    return render_template("index.html", posts=posts.items, title="Explore", prev_url=prev_url, next_url=next_url)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -84,8 +99,12 @@ def register():
 @login_required
 def profile(username):
     user = User.query.filter_by(username=username).first_or_404()
-    posts = current_user.followed_posts().all()
-    return render_template("profile.html", title="profile", user=user, posts=posts)
+    page = request.args.get('page', 1, type=int)
+    posts = user.posts.order_by(Post.timestamp.desc()).paginate(page, app.config['POSTS_PER_PAGE'], False)
+    prev_url = url_for('profile', username=username, page=posts.prev_num) if posts.has_prev else None
+    next_url = url_for('profile', username=username, page=posts.next_num) if posts.has_next else None
+    return render_template("profile.html", title="profile", user=user, posts=posts.items, prev_url=prev_url,
+                           next_url=next_url)
 
 
 @app.route('/edit_profile', methods=['POST', 'GET'])
@@ -136,12 +155,28 @@ def unfollow(username):
     flash('You are not following {}.'.format(username))
     return redirect(url_for('profile', username=username))
 
+@app.route('/translate',methods=["GET","POST"])
+def translate_text():
+    print("\n\n{}\n\n".format(request.form))
+    print("""
+    text: {}
+    src:  {}
+    dest: {}""".format(request.form['text'],
+                          request.form['source_language'],
+                          request.form['dest_language']))
+    return jsonify({
+        'text': translate(request.form['text'],
+                          request.form['source_language'],
+                          request.form['dest_language'])
+    })
+
 
 @app.before_request
 def before_request():
     if current_user.is_authenticated:
         current_user.last_seen = datetime.utcnow()
         db.session.commit()
+    g.locale = str(get_locale())
 
 
 # not sure if this should be here or somewhere else
